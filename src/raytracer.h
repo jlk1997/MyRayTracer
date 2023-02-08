@@ -35,6 +35,8 @@ int image_height = static_cast<int>(image_width / aspect_ratio);
 int samples_per_pixel = 100;
 const int max_depth = 50;
 
+//picture id
+int pic_id = 0;
 
 // camera
 point3 lookfrom(13, 2, 3);
@@ -83,6 +85,16 @@ public:
 		pixels[index * 4 + 1] = static_cast<int>(256 * clamp(g, 0.0, 0.999));
 		pixels[index * 4 + 2] = static_cast<int>(256 * clamp(b, 0.0, 0.999));
 		pixels[index * 4 + 3] = 255;
+	}
+
+	hittable_list two_sphere() {
+		hittable_list objects;
+		auto checker = make_shared<checker_texture>(color(0.2,0.3,0.1) , color(0.9));
+
+		objects.add(make_shared<sphere>(point3(0.-10.0), 10,make_shared<lambertian>(checker)));
+		objects.add(make_shared<sphere>(point3(0,10,0),10,make_shared<lambertian>(checker)));
+
+		return objects;
 	}
 
 	hittable_list init_render()
@@ -144,8 +156,26 @@ public:
 		pixels = _pixels;
 		startTime = glfwGetTime();
 
+		switch (pic_id) {
+			case 1:
+				hworld = init_render();
+				lookfrom = point3(13,2,3);
+				lookat = point3(0);
+				vfov = 20.0;
+				aperture = 0.1;
+				cam.init(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+				break;
+			case 2:
+				hworld = two_sphere();
+				lookfrom = point3(13, 2, 3);
+				lookat = point3(0);
+				vfov = 20.0;
+				aperture = 0.0;
+				cam.init(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+				break;
+		}
+
 		// world and camera
-		hworld = init_render();
 		bvh = setBVH();
 
 		int xTiles = (image_width + tileSize - 1) / tileSize;	//将宽与高 拆分为小块，+小块size-1是为了让最后一块等于剩余部分

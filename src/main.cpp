@@ -89,6 +89,7 @@ int main(int argc, char* argv[]) {
 		ImGui::Begin("control");
 		ImGui::InputInt2("size", inputSize);
 		ImGui::InputInt("samples", &samples_per_pixel);
+		ImGui::InputInt("picture id", &pic_id);
 		ImGui::Separator();
 		InputDouble3("lookfrom", (double*)&lookfrom);
 		InputDouble3("lookat", (double*)&lookat);
